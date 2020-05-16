@@ -1,0 +1,52 @@
+@page "/games"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using BuBTT.Shared
+@attribute [Authorize]
+@inject HttpClient Http
+
+<h1>List of Tabletop Systems</h1>
+
+<p>Click on a game to see your collection.</p>
+
+@if (games == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="card-columns">
+        @foreach (var game in games)
+        {
+            <div class="card bg-light">
+                <div class="card-body txt-center">
+                    <button class="card-text btn btn-primary" @onclick="IncrementCount">@game.Name</button>
+                </div>
+            </div>
+        }
+    </div>
+    @counter
+}
+
+@code {
+    private Game[] games;
+    private int counter;
+
+    protected void IncrementCount()
+    {
+        counter++;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            games = await Http.GetFromJsonAsync<Game[]>("Game");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+
+}
