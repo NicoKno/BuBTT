@@ -1,0 +1,36 @@
+﻿@page "/games/{gameid}"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using BuBTT.Shared
+@attribute [Authorize]
+@inject HttpClient Http
+
+@if (game == null)
+{
+    <h1>Loading...</h1>
+}
+else
+{
+    <h1>List of collectibles for @game.Name</h1>
+
+
+}
+
+@code {
+    [Parameter]
+    public int GameId { get; set; }
+
+    public Game game { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            game = await Http.GetFromJsonAsync<Game>($"Games/{GameId}");
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+    }
+}

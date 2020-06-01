@@ -4,6 +4,7 @@
 @using BuBTT.Shared
 @attribute [Authorize]
 @inject HttpClient Http
+@inject NavigationManager UriHelper
 
 <h1>List of Tabletop Systems</h1>
 
@@ -20,33 +21,30 @@ else
         {
             <div class="card bg-light">
                 <div class="card-body txt-center">
-                    <button class="card-text btn btn-primary" @onclick="IncrementCount">@game.Name</button>
+                    <p class="card-text" @onclick="@(() => IncrementCount(game))">@game.Name</p>
                 </div>
             </div>
         }
     </div>
-    @counter
 }
 
 @code {
     private Game[] games;
-    private int counter;
 
-    protected void IncrementCount()
+    protected void IncrementCount(Game currentGame)
     {
-        counter++;
+        UriHelper.NavigateTo($"games/{currentGame.GameId}");
     }
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            games = await Http.GetFromJsonAsync<Game[]>("Game");
+            games = await Http.GetFromJsonAsync<Game[]>("Games");
         }
         catch (AccessTokenNotAvailableException exception)
         {
             exception.Redirect();
         }
     }
-
 }

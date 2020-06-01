@@ -12,21 +12,21 @@ namespace BuBTT.Server.Controllers
     [Authorize]
     [ApiController]
     [Route("[controller]")]
-    public class GameController : ControllerBase
+    public class GamesController : ControllerBase
     {
-        private readonly ILogger<GameController> _logger;
+        private readonly ILogger<GamesController> _logger;
 
         private readonly Game[] _games = new Game[]
         {
             new Game { GameId = 1, Name = "Warhammer 40k"},
             new Game { GameId = 2, Name = "Malifaux"},
-            new Game { GameId = 2, Name = "Hordes"},
-            new Game { GameId = 2, Name = "Warmachine"},
-            new Game { GameId = 2, Name = "Kill Team"},
-            new Game { GameId = 2, Name = "Shadespire"},
+            new Game { GameId = 3, Name = "Hordes"},
+            new Game { GameId = 4, Name = "Warmachine"},
+            new Game { GameId = 5, Name = "Kill Team"},
+            new Game { GameId = 6, Name = "Shadespire"},
         };
 
-        public GameController(ILogger<GameController> logger)
+        public GamesController(ILogger<GamesController> logger)
         {
             _logger = logger;
         }
@@ -35,6 +35,13 @@ namespace BuBTT.Server.Controllers
         public IEnumerable<Game> Get()
         {
             return _games;
+        }
+
+        [HttpGet]
+        [Route("Games/{id}")]
+        public Game GetById([FromRoute]int id)
+        {
+            return _games.FirstOrDefault(g => g.GameId == id);
         }
     }
 }
